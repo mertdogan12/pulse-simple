@@ -44,12 +44,21 @@ type Stream struct {
 }
 
 // Capture creates a new stream for recording and returns its pointer.
-func Capture(clientName, streamName string, spec *SampleSpec) (*Stream, error) {
-	return NewStream("", clientName, STREAM_RECORD, "", streamName, spec, nil, nil)
+func Capture(clientName, streamName string, deviceName string, spec *SampleSpec) (*Stream, error) {
+	return NewStream(
+		"",
+		clientName,
+		STREAM_RECORD,
+		deviceName,
+		streamName,
+		spec,
+		nil,
+		nil,
+	)
 }
 
 // Playback creates a new stream for playback and returns its pointer.
-func Playback(clientName, streamName string, spec *SampleSpec, deviceName string) (*Stream, error) {
+func Playback(clientName, streamName string, deviceName string, spec *SampleSpec) (*Stream, error) {
 	return NewStream(
 		"",
 		clientName,
