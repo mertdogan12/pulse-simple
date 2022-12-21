@@ -9,11 +9,11 @@
 //
 // The format of the data will be as requested on stream creation.
 //
-//  ss := pulse.SampleSpec{pulse.SAMPLE_S16LE, 44100, 2}
-//  stream, _ := pulse.Playback("my app", "my stream", &ss)
-//  defer stream.Free()
-//  defer stream.Drain()
-//  stream.Write(data)
+//	ss := pulse.SampleSpec{pulse.SAMPLE_S16LE, 44100, 2}
+//	stream, _ := pulse.Playback("my app", "my stream", &ss)
+//	defer stream.Free()
+//	defer stream.Drain()
+//	stream.Write(data)
 //
 // More example usage can be found in the examples folder.
 //
@@ -49,14 +49,25 @@ func Capture(clientName, streamName string, spec *SampleSpec) (*Stream, error) {
 }
 
 // Playback creates a new stream for playback and returns its pointer.
-func Playback(clientName, streamName string, spec *SampleSpec) (*Stream, error) {
-	return NewStream("", clientName, STREAM_PLAYBACK, "", streamName, spec, nil, nil)
+func Playback(clientName, streamName string, spec *SampleSpec, deviceName string) (*Stream, error) {
+	return NewStream(
+		"",
+		clientName,
+		STREAM_PLAYBACK,
+		deviceName,
+		streamName,
+		spec,
+		nil,
+		nil,
+	)
 }
 
 func NewStream(
-	serverName, clientName string,
+	serverName string,
+	clientName string,
 	dir StreamDirection,
-	deviceName, streamName string,
+	deviceName string,
+	streamName string,
 	spec *SampleSpec,
 	cmap *ChannelMap,
 	battr *BufferAttr,
@@ -109,7 +120,7 @@ func (s *Stream) Free() {
 }
 
 // Stream.Drain blocks until all buffered data has finished playing.
-func (s *Stream) Drain() (error) {
+func (s *Stream) Drain() error {
 	var err C.int
 	_ = C.pa_simple_drain(s.simple, &err)
 	if err == C.PA_OK {
@@ -119,7 +130,7 @@ func (s *Stream) Drain() (error) {
 }
 
 // Stream.Flush flushes the playback buffer, discarding any audio therein
-func (s *Stream) Flush() (error) {
+func (s *Stream) Flush() error {
 	var err C.int
 	_ = C.pa_simple_flush(s.simple, &err)
 	if err == C.PA_OK {
